@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Add text size adjust for better cross-browser compatibility */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 /* Dynamic Grid Layout with Borders */
 .dynamic-grid {
   display: grid;
@@ -20,4 +26,27 @@
   justify-content: space-between;
   transition: transform 0.3s ease-in-out;
   border: 1px solid #e5e7eb; /* Adding border to grid items */
+}
+
+/* Improved focus states */
+*:focus {
+  outline: 3px solid #4299e1;
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  body {
+    background-color: #000;
+    color: #fff;
+  }
+}
+
+body {
+  @apply bg-gradient-to-r from-blue-500 to-purple-500 min-h-screen;
+}
+
+/* Ensure content is visible on gradient background */
+#root {
+  @apply bg-white bg-opacity-90 min-h-screen;
 }

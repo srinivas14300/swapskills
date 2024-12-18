@@ -1,3 +1,6 @@
+import { UserProfile, Skill } from '../types';
+import type { Timestamp } from 'firebase/firestore';
+import type { User as FirebaseUser } from 'firebase/auth';
 import { forwardRef, InputHTMLAttributes } from 'react';
 import { clsx } from 'clsx';
 
@@ -10,9 +13,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, error, ...props }, ref) => {
     return (
       <div className="space-y-1">
-        {label && (
-          <label className="text-sm font-medium text-gray-700">{label}</label>
-        )}
+        {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
         <input
           ref={ref}
           className={clsx(

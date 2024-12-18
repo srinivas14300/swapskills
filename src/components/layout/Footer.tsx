@@ -1,5 +1,9 @@
+import { UserProfile, Skill } from '../types';
+import type { Timestamp } from 'firebase/firestore';
+import type { User as FirebaseUser } from 'firebase/auth';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, LinkedIn } from 'lucide-react'; // Icons for social media
+import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'; // Icons for social media
 
 /**
  * Footer component containing navigation links, social media links, contact information, and legal links.
@@ -15,16 +19,24 @@ export function Footer() {
             <h3 className="font-bold text-lg mb-4">Quick Links</h3>
             <ul>
               <li>
-                <Link to="/" className="text-gray-400 hover:text-white">Home</Link>
+                <Link to="/" className="text-gray-400 hover:text-white">
+                  Home
+                </Link>
               </li>
               <li>
-                <Link to="/about" className="text-gray-400 hover:text-white">About Us</Link>
+                <Link to="/about" className="text-gray-400 hover:text-white">
+                  About Us
+                </Link>
               </li>
               <li>
-                <Link to="/techevents" className="text-gray-400 hover:text-white">Tech Events</Link>
+                <Link to="/techevents" className="text-gray-400 hover:text-white">
+                  Tech Events
+                </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-400 hover:text-white">Contact</Link>
+                <Link to="/contact" className="text-gray-400 hover:text-white">
+                  Contact
+                </Link>
               </li>
             </ul>
           </div>
@@ -33,17 +45,37 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-4">Follow Us</h3>
             <div className="flex space-x-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Facebook className="h-6 w-6" />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Twitter className="h-6 w-6" />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Instagram className="h-6 w-6" />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                <LinkedIn className="h-6 w-6" />
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
+                <Linkedin className="h-6 w-6" />
               </a>
             </div>
           </div>
@@ -52,7 +84,10 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-4">Contact Us</h3>
             <p className="text-gray-400">
-              Email: <a href="mailto:support@example.com" className="hover:text-white">support@example.com</a>
+              Email:{' '}
+              <a href="mailto:support@example.com" className="hover:text-white">
+                support@example.com
+              </a>
             </p>
             <p className="text-gray-400">Phone: +123 456 7890</p>
           </div>
@@ -62,10 +97,14 @@ export function Footer() {
             <h3 className="font-bold text-lg mb-4">Legal</h3>
             <ul>
               <li>
-                <Link to="/privacy-policy" className="text-gray-400 hover:text-white">Privacy Policy</Link>
+                <Link to="/privacy-policy" className="text-gray-400 hover:text-white">
+                  Privacy Policy
+                </Link>
               </li>
               <li>
-                <Link to="/terms-of-service" className="text-gray-400 hover:text-white">Terms of Service</Link>
+                <Link to="/terms-of-service" className="text-gray-400 hover:text-white">
+                  Terms of Service
+                </Link>
               </li>
             </ul>
           </div>

@@ -1,19 +1,18 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { UserProfile, Skill } from '../types';
+import type { Timestamp } from 'firebase/firestore';
+import type { User as FirebaseUser } from 'firebase/auth';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { skills } from '../data/skills';
+import { skills } from '../data/skills.tsx';
 
-const proficiencyLevels = [
-  'Beginner',
-  'Intermediate',
-  'Advanced',
-  'Expert'
-];
+const proficiencyLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
 
 export default function NeedSkill() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     skillName: '',
@@ -23,8 +22,13 @@ export default function NeedSkill() {
     currentKnowledgeLevel: '',
     timeCommitment: '',
     preferredLearningMethod: '',
-    skillsToOffer: ''
+    skillsToOffer: '',
   });
+
+  useEffect(() => {
+    console.log('NeedSkill Component Mounted');
+    console.log('Current Location:', location.pathname);
+  }, [location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +50,7 @@ export default function NeedSkill() {
         userId: user.uid,
         userEmail: user.email,
         createdAt: new Date(),
-        type: 'request'
+        type: 'request',
       });
 
       toast.success('Skill request posted successfully!');
@@ -59,16 +63,23 @@ export default function NeedSkill() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   return (
-    <div style={{ backgroundColor: 'bg-gradient-to-r from-blue-500 to-purple-500', minHeight: '100vh' }}>
+    <div
+      style={{
+        backgroundColor: 'bg-gradient-to-r from-blue-500 to-purple-500',
+        minHeight: '100vh',
+      }}
+    >
       <div className="max-w-2xl mx-auto p-6">
         <h1 className="text-3xl font-bold mb-6">Request a Skill</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -83,7 +94,9 @@ export default function NeedSkill() {
             >
               <option value="">Select a skill</option>
               {skills.map((skill, index) => (
-                <option key={index} value={skill}>{skill}</option>
+                <option key={index} value={skill}>
+                  {skill}
+                </option>
               ))}
             </select>
           </div>
@@ -98,8 +111,10 @@ export default function NeedSkill() {
               className="w-full p-2 border rounded-md"
             >
               <option value="">Select target level</option>
-              {proficiencyLevels.map(level => (
-                <option key={level} value={level}>{level}</option>
+              {proficiencyLevels.map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
               ))}
             </select>
           </div>
@@ -114,8 +129,10 @@ export default function NeedSkill() {
               className="w-full p-2 border rounded-md"
             >
               <option value="">Select current level</option>
-              {proficiencyLevels.map(level => (
-                <option key={level} value={level}>{level}</option>
+              {proficiencyLevels.map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
               ))}
             </select>
           </div>
@@ -160,7 +177,9 @@ export default function NeedSkill() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Skills You Can Offer in Exchange</label>
+            <label className="block text-sm font-medium mb-2">
+              Skills You Can Offer in Exchange
+            </label>
             <textarea
               name="skillsToOffer"
               value={formData.skillsToOffer}

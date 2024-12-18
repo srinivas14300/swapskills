@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { UserProfile, Skill } from '../types';
+import type { Timestamp } from 'firebase/firestore';
+import type { User as FirebaseUser } from 'firebase/auth';
+import React, { useState, useEffect, memo } from 'react';
 import { getFirestore, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
-import { Button } from '../components/ui/Button';
-import { toast } from 'react-hot-toast';
-import { useAuth } from '../hooks/useAuth';
+import { Button } from '../components/ui/Button.tsx';
+import toast from 'react-hot-toast';
+import { useAuth } from '../hooks/useAuth.tsx';
 
 interface SkillRequest {
   id: string;
@@ -13,7 +16,7 @@ interface SkillRequest {
   targetProficiencyLevel: string;
 }
 
-const Requests: React.FC = () => {
+export const Requests: React.FC = memo(() => {
   const [requests, setRequests] = useState<SkillRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -26,10 +29,13 @@ const Requests: React.FC = () => {
         const q = query(requestsRef, where('type', '==', 'request'));
 
         const querySnapshot = await getDocs(q);
-        const fetchedRequests = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        } as SkillRequest));
+        const fetchedRequests = querySnapshot.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            }) as SkillRequest
+        );
 
         setRequests(fetchedRequests);
         setLoading(false);
@@ -68,9 +74,7 @@ const Requests: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-500 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-white mb-10">
-          Skill Exchange Requests
-        </h1>
+        <h1 className="text-4xl font-bold text-center text-white mb-10">Skill Exchange Requests</h1>
 
         {loading ? (
           <div className="text-center text-white py-8">Loading requests...</div>
@@ -81,17 +85,13 @@ const Requests: React.FC = () => {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {requests.map((request) => (
-              <div 
-                key={request.id} 
+              <div
+                key={request.id}
                 className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all hover:scale-105"
               >
                 <div className="p-6">
-                  <h2 className="text-2xl font-semibold text-blue-600 mb-3">
-                    {request.skillName}
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    {request.description}
-                  </p>
+                  <h2 className="text-2xl font-semibold text-blue-600 mb-3">{request.skillName}</h2>
+                  <p className="text-gray-600 mb-4">{request.description}</p>
                   <span className="text-sm text-gray-500">
                     Posted on: {new Date(request.createdAt.seconds * 1000).toLocaleDateString()}
                   </span>
@@ -99,10 +99,7 @@ const Requests: React.FC = () => {
                     <span className="text-sm text-gray-500">
                       Proficiency Level: {request.targetProficiencyLevel}
                     </span>
-                    <Button 
-                      onClick={() => handleRequestSkill(request)}
-                      className="ml-2"
-                    >
+                    <Button onClick={() => handleRequestSkill(request)} className="ml-2">
                       Help Out
                     </Button>
                   </div>
@@ -114,6 +111,6 @@ const Requests: React.FC = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Requests;

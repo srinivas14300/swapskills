@@ -1,115 +1,112 @@
-import React, { useState, useEffect } from "react";
+import { UserProfile, Skill } from '../types';
+import type { Timestamp } from 'firebase/firestore';
+import type { User as FirebaseUser } from 'firebase/auth';
+import React, { useState, useEffect, memo } from 'react';
 
-const TechEvents: React.FC = () => {
+export default memo(function TechEvents() {
   const [hackathonIndex, setHackathonIndex] = useState(0);
   const [workshopIndex, setWorkshopIndex] = useState(0);
 
   const hackathons = Array.from({ length: 22 }, (_, index) => ({
     title: `Hackathon ${index + 1}`,
     domain: [
-      "AI",
-      "Blockchain",
-      "Cybersecurity",
-      "Cloud Computing",
-      "Data Science",
-      "Web Development",
-      "IoT",
+      'AI',
+      'Blockchain',
+      'Cybersecurity',
+      'Cloud Computing',
+      'Data Science',
+      'Web Development',
+      'IoT',
     ][index % 7],
     date: `2024-0${(index % 12) + 1}-15`,
-    location: "Hyderabad",
+    location: 'Hyderabad',
     featured: index % 5 === 0,
   }));
 
   const workshops = [
     {
-      title: "Web Development Bootcamp",
-      domain: "Web Development",
-      date: "2023-11-15",
-      location: "Hyderabad",
+      title: 'Web Development Bootcamp',
+      domain: 'Web Development',
+      date: '2023-11-15',
+      location: 'Hyderabad',
     },
     {
-      title: "Data Science with Python",
-      domain: "Data Science",
-      date: "2023-12-10",
-      location: "Hyderabad",
+      title: 'Data Science with Python',
+      domain: 'Data Science',
+      date: '2023-12-10',
+      location: 'Hyderabad',
     },
     {
-      title: "Blockchain Essentials",
-      domain: "Blockchain",
-      date: "2024-01-20",
-      location: "Hyderabad",
+      title: 'Blockchain Essentials',
+      domain: 'Blockchain',
+      date: '2024-01-20',
+      location: 'Hyderabad',
     },
     {
-      title: "Machine Learning for Beginners",
-      domain: "AI",
-      date: "2024-02-05",
-      location: "Hyderabad",
+      title: 'Machine Learning for Beginners',
+      domain: 'AI',
+      date: '2024-02-05',
+      location: 'Hyderabad',
     },
     {
-      title: "Cybersecurity Fundamentals",
-      domain: "Cybersecurity",
-      date: "2024-03-10",
-      location: "Hyderabad",
+      title: 'Cybersecurity Fundamentals',
+      domain: 'Cybersecurity',
+      date: '2024-03-10',
+      location: 'Hyderabad',
     },
   ];
 
-  const handleSlide = (
-    setIndex: React.Dispatch<React.SetStateAction<number>>,
-    length: number,
-    direction: number
-  ) => {
-    setIndex((prevIndex) => (prevIndex + direction + length) % length);
+  const _handleSlide = (_direction: 'prev' | 'next', _type: 'hackathon' | 'workshop') => {
+    // Placeholder for potential future implementation
   };
 
-  const renderEventCard = (event: any, isFeatured: boolean = false) => (
+  const renderEventCard = (event: unknown, isFeatured: boolean = false) => (
     <div
       style={{
-        background: "#fff",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        padding: "1rem",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-        textAlign: "center",
-        position: "relative",
-        width: "100%",
-        maxWidth: "450px",
-        transition: "transform 0.3s ease-in-out",
-        marginBottom: "2rem",
+        background: '#fff',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        padding: '1rem',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        textAlign: 'center',
+        position: 'relative',
+        width: '100%',
+        maxWidth: '450px',
+        transition: 'transform 0.3s ease-in-out',
+        marginBottom: '2rem',
       }}
     >
       {isFeatured && (
         <span
           style={{
-            position: "absolute",
-            top: "-10px",
-            left: "10px",
-            backgroundColor: "#f39c12",
-            color: "#fff",
-            padding: "5px 10px",
-            borderRadius: "5px",
-            fontSize: "12px",
-            fontWeight: "bold",
+            position: 'absolute',
+            top: '-10px',
+            left: '10px',
+            backgroundColor: '#f39c12',
+            color: '#fff',
+            padding: '5px 10px',
+            borderRadius: '5px',
+            fontSize: '12px',
+            fontWeight: 'bold',
           }}
         >
           FEATURED
         </span>
       )}
-      <h3 style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>{event.title}</h3>
-      <p style={{ fontSize: "1rem", color: "#555" }}>📅 {event.date}</p>
-      <p style={{ fontSize: "1rem", color: "#555" }}>📍 {event.location}</p>
-      <p style={{ fontSize: "1rem", color: "#555", fontStyle: "italic" }}>
-        🌐 Domain: {event.domain}
-      </p>
+      <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{event.title}</h3>
+      <p style={{ fontSize: '1rem', color: '#555' }}> {event.date}</p>
+      <p style={{ fontSize: '1rem', color: '#555' }}> {event.location}</p>
+      <p style={{ fontSize: '1rem', color: '#555', fontStyle: 'italic' }}>Domain: {event.domain}</p>
       <button
         style={{
-          backgroundColor: "#3498db",
-          color: "#fff",
-          border: "none",
-          borderRadius: "5px",
-          padding: "0.5rem 1rem",
-          marginTop: "1rem",
-          cursor: "pointer",
-          fontSize: "1rem",
+          backgroundColor: '#3498db',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '5px',
+          padding: '0.5rem 1rem',
+          marginTop: '1rem',
+          cursor: 'pointer',
+          fontSize: '1rem',
         }}
         onClick={() => alert(`Registered for ${event.title}`)}
       >
@@ -134,140 +131,59 @@ const TechEvents: React.FC = () => {
   }, [hackathons.length, workshops.length]);
 
   return (
-    <div
-      style={{
-        maxWidth: "1200px",
-        margin: "0 auto",
-        padding: "2rem",
-        backgroundColor: "#f8f9fa", // Update this to match the home page's background
-        color: "#000",
-      }}
-    >
-      <header style={{ textAlign: "center", marginBottom: "3rem" }}>
+    <div className="min-h-screen py-8 bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+      <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
         <h1
           style={{
-            fontSize: "2.5rem",
-            fontWeight: "bold",
-            color: "black",
+            textAlign: 'center',
+            fontSize: '2.5rem',
+            fontWeight: 'bold',
+            marginBottom: '2rem',
+            color: 'white',
           }}
         >
-          Tech Events
+          Tech Events & Opportunities
         </h1>
-        <p
+
+        <div
           style={{
-            fontSize: "1.1rem",
-            maxWidth: "800px",
-            margin: "0 auto",
-            color: "black",
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: '1.5rem',
+            padding: '1rem',
           }}
         >
-          Stay updated with the latest in tech! From hackathons to technical
-          workshops, join us to explore, learn, and innovate!
-        </p>
-      </header>
-
-      <main>
-        <section id="hackathons" style={{ marginBottom: "3rem" }}>
-          <h2
-            style={{
-              fontSize: "2rem",
-              marginBottom: "1rem",
-              color: "#34495e",
-              textAlign: "center",
-            }}
-          >
-            Hackathons in Hyderabad
-          </h2>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "2rem",
-              flexWrap: "wrap",
-            }}
-          >
-            <button
+          <div>
+            <h2
               style={{
-                background: "none",
-                border: "none",
-                fontSize: "2rem",
-                cursor: "pointer",
-                color: "#3498db",
+                fontSize: '1.75rem',
+                fontWeight: 'bold',
+                marginBottom: '1rem',
+                color: 'white',
               }}
-              onClick={() => handleSlide(setHackathonIndex, hackathons.length, -1)}
             >
-              ❮
-            </button>
-            {renderEventCard(
-              hackathons[hackathonIndex],
-              hackathons[hackathonIndex].featured
-            )}
-            <button
-              style={{
-                background: "none",
-                border: "none",
-                fontSize: "2rem",
-                cursor: "pointer",
-                color: "#3498db",
-              }}
-              onClick={() => handleSlide(setHackathonIndex, hackathons.length, 1)}
-            >
-              ❯
-            </button>
+              Upcoming Hackathons
+            </h2>
+            {hackathons
+              .slice(0, 5)
+              .map((hackathon, index) => renderEventCard(hackathon, hackathon.featured))}
           </div>
-        </section>
 
-        <section id="workshops" style={{ marginBottom: "3rem" }}>
-          <h2
-            style={{
-              fontSize: "2rem",
-              marginBottom: "1rem",
-              color: "#34495e",
-              textAlign: "center",
-            }}
-          >
-            Technical Workshops in Hyderabad
-          </h2>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "2rem",
-              flexWrap: "wrap",
-            }}
-          >
-            <button
+          <div>
+            <h2
               style={{
-                background: "none",
-                border: "none",
-                fontSize: "2rem",
-                cursor: "pointer",
-                color: "#3498db",
+                fontSize: '1.75rem',
+                fontWeight: 'bold',
+                marginBottom: '1rem',
+                color: 'white',
               }}
-              onClick={() => handleSlide(setWorkshopIndex, workshops.length, -1)}
             >
-              ❮
-            </button>
-            {renderEventCard(workshops[workshopIndex])}
-            <button
-              style={{
-                background: "none",
-                border: "none",
-                fontSize: "2rem",
-                cursor: "pointer",
-                color: "#3498db",
-              }}
-              onClick={() => handleSlide(setWorkshopIndex, workshops.length, 1)}
-            >
-              ❯
-            </button>
+              Workshops
+            </h2>
+            {workshops.map((workshop, index) => renderEventCard(workshop))}
           </div>
-        </section>
-      </main>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default TechEvents;
+});

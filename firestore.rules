@@ -1,0 +1,133 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Authentication and Authorization Helpers
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUserOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Validation Functions
+    function isValidUserProfile(profile) {
+      return profile.size() > 0 
+        && 'email' in profile 
+        && 'displayName' in profile 
+        && profile.email is string 
+        && profile.displayName is string
+        && profile.displayName.size() > 2
+        && profile.displayName.size() <= 50;
+    }
+
+    function isValidSkill(skill) {
+      return skill.size() > 0
+        && 'name' in skill 
+        && 'category' in skill
+        && 'description' in skill
+        && skill.name is string 
+        && skill.category is string
+        && skill.description is string
+        && skill.name.size() > 2
+        && skill.name.size() <= 50
+        && skill.description.size() <= 500;
+    }
+
+    function isValidSkillExchange(exchange) {
+      return exchange.size() > 0
+        && 'requesterId' in exchange
+        && 'responderId' in exchange
+        && 'status' in exchange
+        && exchange.requesterId is string
+        && exchange.responderId is string
+        && exchange.status is string
+        && ['pending', 'accepted', 'rejected', 'completed'].hasAny([exchange.status]);
+    }
+
+    function isValidMessage(message) {
+      return message.size() > 0
+        && 'senderId' in message
+        && 'receiverId' in message
+        && 'content' in message
+        && message.senderId is string
+        && message.receiverId is string
+        && message.content is string
+        && message.content.size() > 0
+        && message.content.size() <= 1000;
+    }
+
+    // Make everything readable and writable for authenticated users
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // User Profiles Collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && isUserOwner(userId);
+      allow create: if isAuthenticated() 
+        && isValidUserProfile(request.resource.data)
+        && isUserOwner(userId);
+      allow update: if isAuthenticated() 
+        && isUserOwner(userId)
+        && isValidUserProfile(request.resource.data);
+      allow delete: if false; // Prevent user profile deletion
+    }
+
+    // Skills Collection
+    match /skills/{skillId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    // Skill Exchanges Collection
+    match /skillExchanges/{exchangeId} {
+      allow read: if isAuthenticated() 
+        && (request.auth.uid == resource.data.requesterId 
+            || request.auth.uid == resource.data.responderId);
+      allow create: if isAuthenticated() 
+        && isValidSkillExchange(request.resource.data)
+        && request.resource.data.requesterId == request.auth.uid;
+      allow update: if isAuthenticated() 
+        && (request.auth.uid == resource.data.requesterId 
+            || request.auth.uid == resource.data.responderId)
+        && isValidSkillExchange(request.resource.data);
+      allow delete: if false; // Prevent direct deletion
+    }
+
+    // Skill Swaps Collection
+    match /skillSwaps/{swapId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthenticated();
+    }
+
+    // Messages Collection
+    match /messages/{messageId} {
+      allow read: if isAuthenticated() 
+        && (request.auth.uid == resource.data.senderId 
+            || request.auth.uid == resource.data.receiverId);
+      allow create: if isAuthenticated() 
+        && isValidMessage(request.resource.data)
+        && request.resource.data.senderId == request.auth.uid;
+      allow update, delete: if false; // Prevent message modification
+    }
+
+    // Reviews Collection
+    match /reviews/{reviewId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() 
+        && request.auth.uid != resource.data.reviewedUserId
+        && request.resource.data.reviewerId == request.auth.uid;
+      allow update, delete: if false; // Prevent review modification
+    }
+
+    // Notifications Collection
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() 
+        && request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated() 
+        && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Prevent modification
+    }
+  }
+}

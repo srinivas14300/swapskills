@@ -1,119 +1,92 @@
+import { UserProfile, Skill } from '../types';
+import type { Timestamp } from 'firebase/firestore';
+import type { User as FirebaseUser } from 'firebase/auth';
 import React, { useState } from 'react';
 
-const Contact = () => {
-  const [submitted, setSubmitted] = useState(false); // Track submission status
+export const Contact = React.memo(() => {
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault(); // Prevent form from refreshing the page
-    setSubmitted(true); // Update state to show success modal
+    event.preventDefault();
+    setSubmitted(true);
   };
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1 style={{ textAlign: 'center', fontSize: '2rem', marginBottom: '1.5rem' }}>Contact Us</h1>
-      
-      <p style={{ fontSize: '1rem', textAlign: 'center', marginBottom: '2rem' }}>
-        Welcome to Swap Skills! We're here to help you connect, learn, and grow by exchanging knowledge and expertise in various tech fields.
-        If you have any questions or need assistance, please feel free to reach out to us using the form below. We would love to hear from you!
-      </p>
+    <div className="min-h-screen py-8 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">Contact Us</h1>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <label htmlFor="name" style={{ fontSize: '1rem' }}>Name:</label>
-        <input
-          type="text"
-          id="name"
-          placeholder="Enter your name"
-          style={{
-            padding: '0.75rem',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            fontSize: '1rem',
-          }}
-        />
+        <p className="text-center text-gray-600 mb-6">
+          Welcome to Swap Skills! We're here to help you connect, learn, and grow by exchanging
+          knowledge and expertise in various tech fields. If you have any questions or need
+          assistance, please feel free to reach out to us using the form below. We would love to
+          hear from you!
+        </p>
 
-        <label htmlFor="email" style={{ fontSize: '1rem' }}>Email:</label>
-        <input
-          type="email"
-          id="email"
-          placeholder="Enter your email"
-          style={{
-            padding: '0.75rem',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            fontSize: '1rem',
-          }}
-        />
-
-        <label htmlFor="message" style={{ fontSize: '1rem' }}>Message:</label>
-        <textarea
-          id="message"
-          placeholder="Enter your message"
-          style={{
-            padding: '0.75rem',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            fontSize: '1rem',
-            minHeight: '150px',
-          }}
-        />
-
-        <button
-          type="submit"
-          style={{
-            padding: '1rem',
-            backgroundColor: '#1d4ed8',
-            color: '#ffffff',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginTop: '1rem',
-          }}
-        >
-          Submit
-        </button>
-      </form>
-
-      {/* Success Modal */}
-      {submitted && (
-        <div style={{
-          position: 'fixed',
-          top: '0',
-          left: '0',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          zIndex: '1000',
-        }}>
-          <div style={{
-            backgroundColor: '#ffffff',
-            padding: '2rem',
-            borderRadius: '8px',
-            textAlign: 'center',
-            width: '300px',
-          }}>
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Submission Successful!</h2>
-            <p style={{ marginBottom: '1rem' }}>Thank you for reaching out to us. We'll get back to you soon.</p>
-            <button
-              onClick={() => setSubmitted(false)} // Close modal
-              style={{
-                padding: '0.5rem 1rem',
-                backgroundColor: '#1d4ed8',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-              }}
-            >
-              Close
-            </button>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Name:
+            </label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Enter your name"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              required
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email:
+            </label>
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+              Message:
+            </label>
+            <textarea
+              id="message"
+              placeholder="Enter your message"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 min-h-[150px]"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Submit
+          </button>
+        </form>
+
+        {submitted && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg text-center max-w-md">
+              <h2 className="text-2xl font-bold text-blue-600 mb-4">Submission Successful!</h2>
+              <p className="text-gray-600 mb-6">
+                Thank you for reaching out to us. We'll get back to you soon.
+              </p>
+              <button
+                onClick={() => setSubmitted(false)}
+                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
-};
-
-export default Contact;
+});

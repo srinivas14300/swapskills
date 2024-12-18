@@ -1,70 +1,82 @@
-import { useState } from 'react';
+import { UserProfile, Skill } from '../types';
+import type { Timestamp } from 'firebase/firestore';
+import type { User as FirebaseUser } from 'firebase/auth';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { useAuth } from '../contexts/AuthContext';
-import { FirebaseError } from 'firebase/app';
+import { useAuth } from '../contexts/AuthContext'; 
 
-export function Register() {
+const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { signUp } = useAuth();
+  const [displayName, setDisplayName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setIsLoading(true);
+
+    // Validate form
+    if (!displayName.trim()) {
+      toast.error('Please enter your display name');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!email.trim()) {
+      toast.error('Please enter your email');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!password.trim()) {
+      toast.error('Please enter a password');
+      setIsLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error('Passwords do not match');
+      setIsLoading(false);
       return;
     }
-
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters long');
-      return;
-    }
-
-    setLoading(true);
 
     try {
-      await signUp(email, password);
-      toast.success('Account created successfully!');
-      navigate('/');
-    } catch (error) {
-      console.error('Registration error:', error);
-      if (error instanceof FirebaseError) {
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            toast.error('Email is already registered. Please use a different email or try logging in.');
-            break;
-          case 'auth/invalid-email':
-            toast.error('Invalid email address. Please check your email format.');
-            break;
-          case 'auth/operation-not-allowed':
-            toast.error('Email/password registration is not enabled. Please contact support.');
-            break;
-          case 'auth/weak-password':
-            toast.error('Password is too weak. Please use a stronger password.');
-            break;
-          default:
-            toast.error(`Registration failed: ${error.message}`);
-        }
-      } else {
-        toast.error('Failed to create account. Please try again later.');
-      }
+      await signUp(email, password, displayName);
+      toast.success('Registration successful!');
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Registration Error:', error);
+      toast.error(error.message || 'Registration failed. Please try again.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      setIsLoading(true);
+      await signInWithGoogle();
+      toast.success('Google Sign-Up Successful!');
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Google Sign-Up Error:', error);
+      toast.error(error.message || 'Google Sign-Up failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl">
         <div>
-          <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Create your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
@@ -74,44 +86,68 @@ export function Register() {
             </Link>
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
+            <Input
+              label="Display Name"
+              type="text"
+              placeholder="Your name or username"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              autoComplete="name"
+            />
             <Input
               label="Email address"
               type="email"
+              placeholder="your.email@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="your.email@example.com"
               autoComplete="email"
             />
             <Input
               label="Password"
               type="password"
+              placeholder="At least 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="At least 6 characters"
               autoComplete="new-password"
             />
             <Input
               label="Confirm Password"
               type="password"
+              placeholder="Repeat your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              placeholder="Repeat your password"
               autoComplete="new-password"
             />
           </div>
 
           <div>
-            <Button type="submit" className="w-full" isLoading={loading} disabled={loading}>
-              {loading ? 'Creating Account...' : 'Create Account'}
+            <Button
+              type="submit"
+              className="w-full" 
+              isLoading={isLoading} 
+              disabled={isLoading}
+            >
+              {isLoading ? 'Creating Account...' : 'Create Account'}
+            </Button>
+          </div>
+
+          <div className="mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogleSignUp}
+              disabled={isLoading}
+            >
+              Sign up with Google
             </Button>
           </div>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default Register;
