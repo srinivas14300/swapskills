@@ -1,0 +1,81 @@
+name: Skill Swap CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        
+    - name: Cache npm dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    
+    - name: Install Dependencies
+      run: npm ci
+    
+    - name: Lint Code
+      run: npm run lint
+    
+    - name: Run Unit Tests
+      run: npm run test:unit
+      env:
+        VITE_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+        VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+        VITE_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+    
+    - name: Run Integration Tests
+      run: npm run test:integration
+    
+    - name: Build Project
+      run: npm run build
+    
+    - name: Upload Coverage
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
+        path_to_write_report: ./coverage/codecov_report.txt
+        verbose: true
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        command: test
+
+  performance:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Lighthouse CI
+      uses: treosh/lighthouse-ci-action@v9
+      with:
+        urls: |
+          https://your-staging-url.com
+        uploadArtifacts: true
+        temporaryPublicStorage: true
