@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Add Skill{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Add a Skill</h2>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Skill Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="type" id="teach" value="teach" checked>
+                            <label class="form-check-label" for="teach">
+                                I want to teach this skill
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="type" id="learn" value="learn">
+                            <label class="form-check-label" for="learn">
+                                I want to learn this skill
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Add Skill</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ current_user.username }}'s Profile</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="card-title">Skills I Can Teach</h3>
+                {% if current_user.skills_to_teach %}
+                    {% for skill in current_user.skills_to_teach %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ skill.name }}</h5>
+                                <p class="card-text">{{ skill.description }}</p>
+                                <p class="card-text"><small class="text-muted">Status: {{ skill.status }}</small></p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No skills added yet. <a href="{{ url_for('add_skill') }}">Add a skill to teach</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="card-title">Skills I Want to Learn</h3>
+                {% if current_user.skills_to_learn %}
+                    {% for skill in current_user.skills_to_learn %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ skill.name }}</h5>
+                                <p class="card-text">{{ skill.description }}</p>
+                                <p class="card-text"><small class="text-muted">Status: {{ skill.status }}</small></p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No skills added yet. <a href="{{ url_for('add_skill') }}">Add a skill to learn</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
